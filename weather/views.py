@@ -118,7 +118,7 @@ def index(request):
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position: center;
-                color: white;
+                color: black;
                 font-family: Arial, sans-serif;
             }
 
@@ -128,7 +128,7 @@ def index(request):
             }
 
             form {
-                background-color: rgba(0, 0, 0, 0.6);  /* Optional: Add a semi-transparent background for better readability */
+                background-color: rgba(0, 0, 0, 0.6);
                 padding: 20px;
                 border-radius: 10px;
                 display: inline-block;
@@ -153,12 +153,163 @@ def index(request):
         </style>
     </head>
     <body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 30vh; text-align: center; flex-direction: column;">
         <h1>Welcome to Live Weather</h1>
         <form method="post">
             <label for="city">Enter city name:</label>
             <input type="text" id="city" name="city" required>
             <button type="submit">Get Weather</button>
         </form>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+        <h2>Weather Results</h2>
+        <div style="display: flex; justify-content: center;">
+            <div style="margin: 0 20px;">
+                <h3>Jaleshwor</h3>
+                <p>Condition: Sunny</p>
+                <p> Temperature: 35°C</p>
+                <p> Precipitation: 1%</p>
+                <p>Humidity: 64%</p>
+                <p> Wind: 14 km/h</p>
+                <h4>Weather</h4>
+                <p>Saturday 16:00</p>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Temperature</th>
+                        <th>Precipitation</th>
+                        <th>Wind</th>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>1%</td>
+                        <td>14 km/h</td>
+                    </tr>
+                    <!-- Add hourly data rows as needed -->
+                </table>
+                <h4>Weekly Forecast</h4>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Day</th>
+                        <th>Condition</th>
+                        <th>High/Low</th>
+                    </tr>
+                    <tr>
+                        <td>Sat</td>
+                        <td>Partly cloudy</td>
+                        <td>37°/28°</td>
+                    </tr>
+                    <tr>
+                        <td>Sun</td>
+                        <td>Mostly sunny</td>
+                        <td>37°/28°</td>
+                    </tr>
+                    <tr>
+                        <td>Mon</td>
+                        <td>Partly cloudy</td>
+                        <td>38°/28°</td>
+                    </tr>
+                     
+                </table>
+            </div>
+            
+            <div style="margin: 0 20px;">
+            <h3>Janakpur</h3>
+                <p>Condition: Sunny</p>
+                <p>Temperature: 35°C</p>
+                <p>Precipitation: 1%</p>
+                <p>Humidity: 64%</p>
+                <p>Wind: 14 km/h</p>
+                <h4>Weather</h4>
+                <p>Saturday 16:00</p>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Temperature</th>
+                        <th>Precipitation</th>
+                        <th>Wind</th>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>1%</td>
+                        <td>14 km/h</td>
+                    </tr>
+                     
+                </table>
+                <h4>Weekly Forecast</h4>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Day</th>
+                        <th>Condition</th>
+                        <th>High/Low</th>
+                    </tr>
+                    <tr>
+                        <td>Sat</td>
+                        <td>Partly cloudy</td>
+                        <td>37°/28°</td>
+                    </tr>
+                    <tr>
+                        <td>Sun</td>
+                        <td>Mostly sunny</td>
+                        <td>37°/28°</td>
+                    </tr>
+                    <tr>
+                        <td>Mon</td>
+                        <td>Partly cloudy</td>
+                        <td>38°/28°</td>
+                    </tr>
+                     
+                </table>
+            </div>
+
+            <div style="margin: 0 20px;">
+                <h3>Kathmandu</h3>
+                <p>Condition: Partly cloudy</p>
+                <p>Temperature: 30°C</p>
+                <p>Precipitation: 5%</p>
+                <p>Humidity: 50%</p>
+                <p>Wind: 10 km/h</p>
+                <h4>Weather</h4>
+                <p>Saturday 16:00</p>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Temperature</th>
+                        <th>Precipitation</th>
+                        <th>Wind</th>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>5%</td>
+                        <td>10 km/h</td>
+                    </tr>
+                     
+                </table>
+                <h4>Weekly Forecast</h4>
+                <table style="margin: 0 auto; border-collapse: collapse;">
+                    <tr>
+                        <th>Day</th>
+                        <th>Condition</th>
+                        <th>High/Low</th>
+                    </tr>
+                    <tr>
+                        <td>Sat</td>
+                        <td>Partly cloudy</td>
+                        <td>32°/24°</td>
+                    </tr>
+                    <tr>
+                        <td>Sun</td>
+                        <td>Sunny</td>
+                        <td>34°/26°</td>
+                    </tr>
+                    <tr>
+                        <td>Mon</td>
+                        <td>Cloudy</td>
+                        <td>30°/25°</td>
+                    </tr>
+                     
+                </table>
+            </div>
+        </div>
+    </div>
     </body>
 </html>
 '''
