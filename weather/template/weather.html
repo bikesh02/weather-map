@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+        <title>Weather</title>
+        {% load static %}
+        <style>
+            body {
+                background-image: url("{% static 'background-image/images.jpeg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+                color: white;
+                font-family: Arial, sans-serif;
+            }
+
+            .weather-info {
+                text-align: center;
+                margin-top: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="weather-info">
+            <h1>Weather in{{ city }}</h1>
+            <p>Temperature: {{ temperature }}°C</p>
+            <p>Condition: {{ weather }}</p>
+        </div>
+    </body>
+</html>
