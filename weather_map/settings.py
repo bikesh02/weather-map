@@ -118,6 +118,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'weather/static')]
+# import os
+
+# output_dir = os.path.join(BASE_DIR, 'static')
+# if not os.path.exists(output_dir):
+#     os.makedirs(output_dir)
+
 
 
 # Default primary key field type
