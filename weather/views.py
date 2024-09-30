@@ -3,7 +3,11 @@ import os
 import requests
 import folium
 import matplotlib
+import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+import joblib
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.templatetags.static import static
@@ -17,9 +21,31 @@ def fetch_live_weather_data_by_city(api_key, city_name):
     else:
         return None
     
+data = {
+    'day_index': list(range(1, 11)),   
+    'temperature': [23, 25, 22, 24, 26, 27, 25, 28, 30, 29]   
+}
+df = pd.DataFrame(data)
 
-def predict_next_day_temperature(current_temp):
-    return current_temp + 1.5   
+X = df[['day_index']]
+y = df['temperature']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = DecisionTreeRegressor()
+model.fit(X_train, y_train)
+
+joblib.dump(model, 'temperature_prediction_model.pkl')
+    
+
+def predict_next_day_temperature():
+    try:
+        model = joblib.load('temperature_prediction_model.pkl')
+        last_index = len(last_week_data()) 
+        predicted_temp = model.predict([[last_index + 1]])[0]
+        return predicted_temp
+    except Exception as e:
+        return None   
 
 
 @csrf_exempt   
@@ -57,20 +83,41 @@ def index(request):
                 condition_analysis = "It might be raining. Don't forget your umbrella!"
                 weather_icon = "/static/icons/rain1.jpeg"
             elif 'broken clouds' in weather_condition.lower():
-                condition_analysis = f"The weather is {weather_condition}."
+                condition_analysis = "Broken clouds are present. Enjoy a mix of sun and shade!"
                 weather_icon = "/static/icons/bc.jpeg"  
             elif 'scattered clouds' in weather_condition.lower():
-                condition_analysis = "The weather is scattered clouds."
+                condition_analysis = "Scattered clouds in the sky. A mix of sun and shade today!"
                 weather_icon = "/static/icons/sc.png" 
+            elif 'few clouds' in weather_condition.lower():
+                condition_analysis = "Few clouds in the sky. Enjoy the clear view!"
+                weather_icon = "/static/icons/few.png" 
+            elif 'haze' in weather_condition.lower():
+                condition_analysis = "Haze is expected. Limit outdoor activities if possible."
+                weather_icon = "/static/icons/haze.png" 
+            elif 'overcast' in weather_condition.lower():
+                condition_analysis = "Overcast skies ahead. Expect a cloudy day with little sunshine!"
+                weather_icon = "/static/icons/overcast.jpeg" 
+            elif 'mist' in weather_condition.lower():
+                condition_analysis = "Misty conditions ahead. Visibility may be reduced!"
+                weather_icon = "/static/icons/mist.png" 
             elif 'clear' in weather_condition.lower():
                 condition_analysis = "The sky is clear. Enjoy the sunshine!"
-                weather_icon = "/static/icons/clear.jpeg"
+                weather_icon = "/static/icons/clear.jpeg" 
+                
             else:
                 condition_analysis = f"The weather is {weather_condition}."
                 weather_icon = "/static/icons/default_weather.jpeg"
+                
+            try:
+                model = joblib.load('temperature_prediction_model.pkl')
+                last_index = len(last_week_data(city_name)) - 1  # Get the index of the last day
+                predicted_temp = model.predict([[last_index + 1]])[0]
+                prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
+            except Exception as e:
+                prediction_message = "Prediction is not available at the moment."
             
-            predicted_temp = predict_next_day_temperature(temperature)
-            prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
+            # predicted_temp = predict_next_day_temperature(temperature)
+            # prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
             
             average_temp = average_temperature(city_name)
             last_week = last_week_data(city_name)
@@ -113,7 +160,7 @@ def index(request):
                     <p>{historical_analysis}</p>
                        <div>
                         <h2><b>Current Weather </b></h2>
-                        <img src="{weather_icon}" alt="Weather Icon">
+                        <img src="{weather_icon}" alt="Weather Icon" style="width: 100px; height: 100px;">
                     </div>
                     <div>
                         <h2><b>Map Location </b></h2>
