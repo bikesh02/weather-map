@@ -2,6 +2,7 @@ from django.http import HttpResponse
 import os
 import requests
 import folium
+import matplotlib
 import matplotlib.pyplot as plt
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
@@ -21,23 +22,6 @@ def predict_next_day_temperature(current_temp):
     return current_temp + 1.5   
 
 
-def create_weather_chart(city_name, temperature, humidity, wind_speed):
-    plt.figure(figsize=(10, 6))
-    parameters = ['Temperature (°C)', 'Humidity (%)', 'Wind Speed (m/s)']
-    values = [temperature, humidity, wind_speed]
-    plt.bar(parameters, values, color=['skyblue', 'orange', 'lightgreen'])
-    plt.title(f'Weather Analysis for {city_name}')
-    plt.xlabel('Parameters')
-    plt.ylabel('Values')
-    plt.grid(axis='y', linestyle='--')
-    static_dir = os.path.join(os.getcwd(), 'static', 'weather_images')
-    os.makedirs(static_dir, exist_ok=True)
-    img_filename = f'{city_name}_weather_analysis.png'
-    img_path = os.path.join(static_dir, img_filename)
-    plt.savefig(img_path)
-    plt.close()
-    return img_filename
-
 @csrf_exempt   
 def index(request):
     if request.method == 'POST':
@@ -56,18 +40,7 @@ def index(request):
             weather_icon = f"http://openweathermap.org/img/wn/{weather_icon_code}@2x.png"
             
             store_weather_data(city_name, temperature, humidity, weather_condition, wind_speed)
-            img_filename = create_weather_chart(city_name, temperature, humidity, wind_speed)
-            
-            
-            # temp_analysis = "It's quite cold." if temperature < 10 else "The weather is mild." if 10 <= temperature <= 25 else "It's warm or hot."
-            # humidity_analysis = "The air is quite humid." if humidity > 70 else "Humidity levels are comfortable."
-            # condition_analysis = (
-            #     "It might be raining. Don't forget your umbrella!" if 'rain' in weather_condition.lower()
-            #     else "The sky is clear. Enjoy the sunshine!" if 'clear' in weather_condition.lower()
-            #     else f"The weather is {weather_condition}."
-            # )
-
-            
+ 
             if temperature < 10:
                 temp_analysis = "It's quite cold."
             elif 10 <= temperature <= 25:
@@ -83,14 +56,18 @@ def index(request):
             if 'rain' in weather_condition.lower():
                 condition_analysis = "It might be raining. Don't forget your umbrella!"
                 weather_icon = "/static/icons/rain1.jpeg"
-            elif 'cloud' in weather_condition.lower():
+            elif 'broken clouds' in weather_condition.lower():
                 condition_analysis = f"The weather is {weather_condition}."
-                weather_icon = "/static/icons/rain.jpeg"  # Add a cloud icon
-            # elif 'clear' in weather_condition.lower():
-            #     condition_analysis = "The sky is clear. Enjoy the sunshine!"
+                weather_icon = "/static/icons/bc.jpeg"  
+            elif 'scattered clouds' in weather_condition.lower():
+                condition_analysis = "The weather is scattered clouds."
+                weather_icon = "/static/icons/sc.png" 
+            elif 'clear' in weather_condition.lower():
+                condition_analysis = "The sky is clear. Enjoy the sunshine!"
+                weather_icon = "/static/icons/clear.jpeg"
             else:
                 condition_analysis = f"The weather is {weather_condition}."
-                weather_icon = None
+                weather_icon = "/static/icons/default_weather.jpeg"
             
             predicted_temp = predict_next_day_temperature(temperature)
             prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
@@ -113,20 +90,6 @@ def index(request):
             file_path = os.path.join(os.getcwd(), map_filename)
             m.save(file_path)
             
-            # plt.figure(figsize=(10, 6))
-            # parameters = ['Temperature (°C)', 'Humidity (%)', 'Wind Speed (m/s)']
-            # values = [temperature, humidity, wind_speed]
-            # plt.bar(parameters, values, color=['skyblue', 'orange', 'lightgreen'])
-            # plt.title(f'Weather Analysis for {city_name}')
-            # plt.xlabel('Parameters')
-            # plt.ylabel('Values')
-            # plt.grid(axis='y', linestyle='--')
-            
-            # Save the plot as an image file
-            # img_filename = f'{city_name}_weather_analysis.png'
-            # img_path = os.path.join(os.getcwd(), 'static', img_filename)
-            # plt.savefig(img_path)
-            # plt.close()
 
             
             with open(file_path, 'r') as file:
@@ -148,10 +111,6 @@ def index(request):
                     <p>{prediction_message}</p>
                     <h2><b>Historical Data</b></h2>
                     <p>{historical_analysis}</p>
-                    <div>
-                        <h2><b>Weather Visualization </b></h2>
-                        <img src="/static/weather_images/{img_filename}" alt="Weather Analysis Chart">
-                    </div>
                        <div>
                         <h2><b>Current Weather </b></h2>
                         <img src="{weather_icon}" alt="Weather Icon">
@@ -195,20 +154,19 @@ def index(request):
                 display: inline-block;
             }
 
-            label {
+             label {
                 color: white;
                 font-size: 1.2em;
-                display: block; /* Ensure label takes a whole line */
-                margin-bottom: 10px; /* Space below the label */
+                display: block;  
+                margin-bottom: 10px; 
             }
 
             input[type="text"] {
-                padding: 10px; /* Add some padding to the input field */
-                width: 250px; /* Set a specific width for the input field */
-                border-radius: 5px; /* Rounded corners for the input */
-                border: none; /* Remove border for cleaner look */
-                font-size: 1em; /* Font size */
-            }
+                padding: 10px;  
+                width: 250px;  
+                border-radius: 5px;  
+                border: none;  
+                font-size: 1em;  
 
             button {
                 background-color: #4CAF50;
