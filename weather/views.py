@@ -38,10 +38,10 @@ model.fit(X_train, y_train)
 joblib.dump(model, 'temperature_prediction_model.pkl')
     
 
-def predict_next_day_temperature():
+def predict_next_day_temperature(city_name):
     try:
         model = joblib.load('temperature_prediction_model.pkl')
-        last_index = len(last_week_data()) 
+        last_index = len(last_week_data(city_name)) 
         predicted_temp = model.predict([[last_index + 1]])[0]
         return predicted_temp
     except Exception as e:
@@ -108,16 +108,19 @@ def index(request):
                 condition_analysis = f"The weather is {weather_condition}."
                 weather_icon = "/static/icons/default_weather.jpeg"
                 
-            try:
-                model = joblib.load('temperature_prediction_model.pkl')
-                last_index = len(last_week_data(city_name)) - 1  # Get the index of the last day
-                predicted_temp = model.predict([[last_index + 1]])[0]
-                prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
-            except Exception as e:
-                prediction_message = "Prediction is not available at the moment."
+            # try:
+            #     model = joblib.load('temperature_prediction_model.pkl')
+            #     last_index = len(last_week_data(city_name)) - 1  # Get the index of the last day
+            #     predicted_temp = model.predict([[last_index + 1]])[0]
+            #     prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
+            # except Exception as e:
+            #     prediction_message = "Prediction is not available at the moment."
             
-            # predicted_temp = predict_next_day_temperature(temperature)
-            # prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
+            predicted_temp = predict_next_day_temperature(city_name)
+            if predicted_temp is not None:
+                prediction_message = f"Based on current trends, the predicted temperature for tomorrow is {predicted_temp:.2f}°C."
+            else:
+                prediction_message = "Prediction is not available at the moment."
             
             average_temp = average_temperature(city_name)
             last_week = last_week_data(city_name)
